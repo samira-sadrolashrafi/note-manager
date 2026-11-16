@@ -1,3 +1,7 @@
 db/*
 init/*
 .freebuff/
+.env
+.env.*
+!.env.example
+.DS_Store
