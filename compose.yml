@@ -20,7 +20,7 @@ services:
       - ./db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: php81_dev_environment
+      MYSQL_DATABASE: notes_app
     networks:
       - php81_dev_environment_network
 
