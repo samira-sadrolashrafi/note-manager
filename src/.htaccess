@@ -1,0 +1,17 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Make the web application available from the service root.
+RewriteRule ^$ public/ [L]
+
+# Never expose internal application source or dependencies directly.
+RewriteRule ^(app|vendor)(/|$) - [F,L,NC]
+
+# Block deployment, environment, and project configuration files.
+RewriteRule ^(bootstrap\.php|composer\.(json|lock)|Dockerfile|compose\.yml|docker-entrypoint\.sh|php\.ini|README\.md)$ - [F,L,NC]
+RewriteRule (^|/)\.env($|\.) - [F,L,NC]
+
+<FilesMatch "\.(sql|log)$">
+    Require all denied
+</FilesMatch>
