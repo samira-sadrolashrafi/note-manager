@@ -59,13 +59,12 @@ The interface is designed for Persian-language use and includes Jalali date sele
 - **Date Handling:** Carbon, Jalali Moment, Persian Date, Persian Datepicker
 - **Environment:** Docker, Docker Compose
 - **Dependency Management:** Composer
-- **UI Preview Hosting:** GitHub Pages
+- **Hosting:** Railway (Docker-based PHP service and MySQL database)
 
 ## Project Structure
 
 ```text
 note-manager/
-├── .github/workflows/       # GitHub Pages deployment workflow
 ├── demo/                   # Standalone interactive browser preview
 ├── Dockerfile
 ├── docker-entrypoint.sh
@@ -156,7 +155,7 @@ The configuration also accepts the standard `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER
 - Remember-me tokens are stored as hashes and have an expiration time.
 - Public notes are visible to other signed-in users; private notes remain available to their owner.
 - The application uses a Jalali date picker, while date filter values are submitted in Gregorian format.
-- The standalone GitHub Pages preview is a browser-side simulation; it is not connected to the PHP backend or a shared database.
+- The hosted `/demo/` preview is a browser-side simulation; it is not connected to the PHP backend or a shared database.
 - Do not enter real personal information into the public preview.
 
 ## Author
