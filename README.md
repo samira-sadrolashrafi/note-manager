@@ -4,11 +4,11 @@ A Persian RTL note management web application built with **PHP** and **MySQL/Mar
 
 ## Live Demo
 
-**[Open the interactive Note Manager preview](https://samira-sadrolashrafi.github.io/note-manager/)**
+**[Open the interactive Note Manager preview](https://note-manager-web-production.up.railway.app/demo/)**
 
-The GitHub Pages version is a front-end preview. It includes sample content and lets visitors try the note-management interface without installing PHP, Composer, Docker, or a database. Changes made in this preview are stored in the visitor's own browser using local storage; they are not sent to the PHP application or shared with other visitors.
+The hosted preview is a front-end demo served from the same Railway service. It includes sample content and lets visitors try the note-management interface without installing PHP, Composer, Docker, or a database. Changes made in this preview are stored in the visitor's own browser using local storage; they are not sent to the PHP application or shared with other visitors.
 
-The full PHP + MySQL application is documented below and can be run locally or deployed to a PHP-capable hosting service.
+The full PHP + MySQL application runs on the same Railway service and is documented below; it can also be run locally with Docker.
 
 ## About the Project
 
