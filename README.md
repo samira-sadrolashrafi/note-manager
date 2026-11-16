@@ -2,6 +2,14 @@
 
 A Persian RTL note management web application built with **PHP** and **MySQL/MariaDB**. Users can create and manage personal notes, publish notes for other users, and browse notes with search, date filters, sorting, and pagination.
 
+## Live Demo
+
+**[Open the interactive Note Manager preview](https://samira-sadrolashrafi.github.io/note-manager/)**
+
+The GitHub Pages version is a front-end preview. It includes sample content and lets visitors try the note-management interface without installing PHP, Composer, Docker, or a database. Changes made in this preview are stored in the visitor's own browser using local storage; they are not sent to the PHP application or shared with other visitors.
+
+The full PHP + MySQL application is documented below and can be run locally or deployed to a PHP-capable hosting service.
+
 ## About the Project
 
 Note Manager is a server-rendered web application built with a lightweight custom MVC structure. It provides account registration and authentication, profile management, and a notes workspace where users can create, edit, delete, and manage the visibility of their notes.
@@ -51,30 +59,30 @@ The interface is designed for Persian-language use and includes Jalali date sele
 - **Date Handling:** Carbon, Jalali Moment, Persian Date, Persian Datepicker
 - **Environment:** Docker, Docker Compose
 - **Dependency Management:** Composer
+- **UI Preview Hosting:** GitHub Pages
 
 ## Project Structure
 
 ```text
 note-manager/
+├── .github/workflows/       # GitHub Pages deployment workflow
+├── demo/                   # Standalone interactive browser preview
 ├── Dockerfile
+├── docker-entrypoint.sh
 ├── compose.yml
 ├── php.ini
 └── src/
     ├── app/
     │   ├── config/          # Database and session configuration
     │   ├── controllers/     # Authentication, notes, pages, and profile
-    │   ├── database/
-    │   │   └── seeders/     # Sample note data
+    │   ├── database/        # Initial schema and startup setup
     │   ├── helpers/         # Session, validation, URL, and date helpers
     │   ├── libraries/       # Core, controller, and database classes
-    │   ├── migrations/      # Remember-token table migration
+    │   ├── migrations/      # Remember-token migration
     │   ├── models/          # User and note models
     │   └── views/           # Authentication, notes, profile, and layouts
-    ├── public/
-    │   ├── css/
-    │   ├── js/
-    │   ├── vendor/          # Local date-related libraries
-    │   └── index.php        # Application entry point
+    ├── public/              # Apache document root
+    ├── vendor/              # Composer dependencies
     ├── composer.json
     └── bootstrap.php
 ```
@@ -98,15 +106,7 @@ docker network create php81_dev_environment_network
 
 If the network already exists, this step can be skipped.
 
-### 3. Configure the database
-
-Check the database settings in `src/app/config/config.php` and make sure they match the MariaDB service settings in `compose.yml`.
-
-In the current configuration, the database name in `config.php` differs from the `MYSQL_DATABASE` value in `compose.yml`. Set them to the same database name before starting the application.
-
-The application also requires the `users` and `notes` tables. Their initial schema is not currently included in the repository, so these tables must be created or imported before using the application. The SQL migration in `src/app/migrations/001_remember_tokens.sql` creates the table used for remember-me tokens.
-
-### 4. Start the containers
+### 3. Start the containers
 
 ```bash
 docker compose up -d --build
@@ -120,14 +120,33 @@ http://localhost:8000
 
 MariaDB is exposed on port `8100` on the host.
 
-### 5. Install PHP dependencies
+On startup, the PHP container waits for the database, creates the `notes_app` database if it does not exist, and applies the schema in `src/app/database/schema.sql`. No manual table creation is required for a fresh database.
 
-If Composer dependencies need to be installed or refreshed, run Composer from the `src` directory:
+### 4. Install PHP dependencies (only when needed)
+
+Composer dependencies are included under `src/vendor`. To refresh or reinstall them, run:
 
 ```bash
 cd src
 composer install
 ```
+
+## Deployment Configuration
+
+The Docker image is configured to serve the application from `src/public`, rather than exposing application source files. At startup, `docker-entrypoint.sh` runs the database setup script before starting Apache.
+
+Configure the following environment variables in a hosted environment:
+
+| Variable | Purpose |
+| --- | --- |
+| `DB_HOST` | Database hostname |
+| `DB_PORT` | Database port |
+| `DB_USER` | Database username |
+| `DB_PASS` | Database password |
+| `DB_NAME` | Database name |
+| `APP_URL` | Optional public application URL |
+
+The configuration also accepts the standard `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, and `MYSQLDATABASE` variables exposed by some managed MySQL services. Do not use the local Compose password for a public deployment; use the generated credentials from your database provider.
 
 ## Notes
 
@@ -137,7 +156,8 @@ composer install
 - Remember-me tokens are stored as hashes and have an expiration time.
 - Public notes are visible to other signed-in users; private notes remain available to their owner.
 - The application uses a Jalali date picker, while date filter values are submitted in Gregorian format.
-- The initial database schema for the `users` and `notes` tables is not included in the repository yet.
+- The standalone GitHub Pages preview is a browser-side simulation; it is not connected to the PHP backend or a shared database.
+- Do not enter real personal information into the public preview.
 
 ## Author
 
