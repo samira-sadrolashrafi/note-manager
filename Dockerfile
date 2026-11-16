@@ -1,5 +1,7 @@
 FROM php:8.1-apache-bookworm
 
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libfreetype6-dev \
@@ -13,17 +15,19 @@ RUN apt-get update \
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-RUN sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" \
+RUN sed -ri "s!/var/www/html!$APACHE_DOCUMENT_ROOT!g" \
     /etc/apache2/sites-available/*.conf \
     /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data src/ /var/www/html/
+COPY --chown=www-data:www-data demo/ /var/www/html/public/demo/
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 80
 
