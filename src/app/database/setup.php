@@ -9,21 +9,43 @@ $user = DB_USER;
 $pass = DB_PASS;
 $name = DB_NAME;
 
-$dsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
+$databaseDsn = "mysql:host={$host};port={$port};dbname={$name};charset=utf8mb4";
+$serverDsn = "mysql:host={$host};port={$port};charset=utf8mb4";
 $pdo = null;
 $lastError = null;
 
 for ($attempt = 1; $attempt <= 30; $attempt++) {
     try {
-        $pdo = new PDO($dsn, $user, $pass, [
+        $pdo = new PDO($databaseDsn, $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_EMULATE_PREPARES => false
         ]);
         break;
     } catch (PDOException $e) {
         $lastError = $e;
-        error_log("Database is not ready (attempt {$attempt}/30).");
-        sleep(2);
+
+        try {
+            $server = new PDO($serverDsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_EMULATE_PREPARES => false
+            ]);
+
+            $databaseName = chr(96) . str_replace(chr(96), '', $name) . chr(96);
+            $server->exec(
+                "CREATE DATABASE IF NOT EXISTS {$databaseName} " .
+                "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+            );
+
+            $pdo = new PDO($databaseDsn, $user, $pass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_EMULATE_PREPARES => false
+            ]);
+            break;
+        } catch (PDOException $databaseError) {
+            $lastError = $databaseError;
+            error_log("Database is not ready (attempt {$attempt}/30).");
+            sleep(2);
+        }
     }
 }
 
@@ -40,7 +62,12 @@ if ($sql === false) {
 }
 
 try {
-    $pdo->exec($sql);
+    $statements = array_filter(array_map('trim', explode(';', $sql)));
+
+    foreach ($statements as $statement) {
+        $pdo->exec($statement);
+    }
+
     echo "Database schema is ready." . PHP_EOL;
 } catch (PDOException $e) {
     error_log('Database schema initialization failed: ' . $e->getMessage());
