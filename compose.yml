@@ -6,6 +6,12 @@ services:
     build: .
     volumes:
       - ./src:/var/www/html
+    environment:
+      DB_HOST: php81_dev_environment_database
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: 1234
+      DB_NAME: notes_app
     networks:
       - php81_dev_environment_network
 
