@@ -36,11 +36,19 @@ function isLoggedIn()
     return true;
 }
 
-function rememberCookieOptions(int $expires): array{
+function rememberCookieOptions(int $expires): array
+{
+    $forwardedProtocol = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+    $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+
+    if ($forwardedProtocol !== '') {
+        $isHttps = trim(explode(',', $forwardedProtocol)[0]) === 'https';
+    }
+
     return [
         'expires' => $expires,
         'path' => '/',
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'secure' => $isHttps,
         'httponly' => true,
         'samesite' => 'Lax'
     ];
@@ -51,4 +59,3 @@ function clearRememberCookie()
     setcookie('remember_token', '', rememberCookieOptions(time() - 3600));
     unset($_COOKIE['remember_token']);
 }
-
