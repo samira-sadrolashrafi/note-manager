@@ -1,10 +1,9 @@
 <?php
 
-
 class Database
 {
-
     private $host = DB_HOST;
+    private $port = DB_PORT;
     private $user = DB_USER;
     private $pass = DB_PASS;
     private $dbname = DB_NAME;
@@ -15,60 +14,54 @@ class Database
 
     public function __construct()
     {
-
-        $dsn = "mysql:host={$this->host};dbname={$this->dbname};charset=utf8mb4";
+        $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8mb4";
 
         try {
-
             $this->dbh = new PDO(
                 $dsn,
                 $this->user,
-                $this->pass
+                $this->pass,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+                    PDO::ATTR_EMULATE_PREPARES => false
+                ]
             );
-
-            $this->dbh->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-
-
-        } catch(PDOException $e){
-
+        } catch (PDOException $e) {
             $this->error = "خطا در اتصال به پایگاه داده";
-
+            error_log($e->getMessage());
         }
-
     }
 
-
-    public function getError(){
-
+    public function getError()
+    {
         return $this->error;
     }
 
-    public function query($sql){
-
+    public function query($sql)
+    {
         $this->stmt = $this->dbh->prepare($sql);
     }
 
-    public function bind($param , $value, $type = PDO::PARAM_STR){
-
-        $this->stmt->bindValue($param , $value, $type);
+    public function bind($param, $value, $type = PDO::PARAM_STR)
+    {
+        $this->stmt->bindValue($param, $value, $type);
     }
 
-    public function execute(){
-
+    public function execute()
+    {
         return $this->stmt->execute();
     }
 
-    public function allResult(){
-
+    public function allResult()
+    {
         $this->execute();
-
         return $this->stmt->fetchAll();
     }
 
-    public function singleResult(){
-
+    public function singleResult()
+    {
         $this->execute();
-
         return $this->stmt->fetch();
     }
 }
