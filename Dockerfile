@@ -13,16 +13,17 @@ RUN apt-get update \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
 RUN sed -ri "s!/var/www/html!$APACHE_DOCUMENT_ROOT!g" \
-    /etc/apache2/sites-available/*.conf \
-    /etc/apache2/apache2.conf
+        /etc/apache2/sites-available/*.conf \
+        /etc/apache2/apache2.conf \
+    && sed -ri "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data src/ /var/www/html/
-COPY --chown=www-data:www-data demo/ /var/www/html/public/demo/
+COPY --chown=www-data:www-data demo/ /var/www/html/demo/
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
