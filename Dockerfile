@@ -10,7 +10,9 @@ RUN apt-get update \
         libzip-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" gd mysqli pdo_mysql zip \
-    && a2enmod rewrite \
+    && (a2dismod mpm_event || true) \
+    && (a2dismod mpm_worker || true) \
+    && a2enmod mpm_prefork rewrite \
     && rm -rf /var/lib/apt/lists/*
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html
