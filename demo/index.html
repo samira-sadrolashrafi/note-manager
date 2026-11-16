@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="دموی تعاملی برنامه مدیریت یادداشت‌ها">
+    <title>Note Manager | دموی تعاملی</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <section id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-card">
+            <div class="brand-mark" aria-hidden="true">N</div>
+            <p class="eyebrow">NOTE MANAGER</p>
+            <h1>یادداشت‌هایت را<br><span>مرتب و همیشه در دسترس</span> نگه دار.</h1>
+            <p class="welcome-description">
+                یک فضای ساده برای ثبت، ویرایش و دسته‌بندی یادداشت‌ها؛ با امکان خصوصی نگه‌داشتن یا به‌اشتراک‌گذاشتن آن‌ها.
+            </p>
+            <div class="welcome-features">
+                <div><span class="feature-icon">✎</span><span>مدیریت یادداشت‌ها</span></div>
+                <div><span class="feature-icon">⌕</span><span>جستجو و فیلتر</span></div>
+                <div><span class="feature-icon">◎</span><span>یادداشت عمومی و شخصی</span></div>
+            </div>
+            <button id="startDemoButton" class="btn btn-primary btn-lg w-100">ورود به محیط نمایشی <span aria-hidden="true">←</span></button>
+            <p class="welcome-hint">برای مشاهده نیازی به ثبت‌نام یا نصب برنامه نیست.</p>
+        </div>
+        <div class="welcome-footer">یک نسخهٔ نمایشی از پروژهٔ PHP Note Manager</div>
+    </section>
+
+    <div id="appScreen" class="d-none">
+        <nav class="navbar app-navbar">
+            <div class="container-fluid page-container">
+                <a class="navbar-brand d-flex align-items-center gap-2" href="#" aria-label="صفحه اصلی Note Manager">
+                    <span class="brand-mark brand-mark-small">N</span>
+                    <span>Note Manager</span>
+                </a>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-light btn-sm profile-button" data-bs-toggle="modal" data-bs-target="#profileModal">
+                        <span class="avatar">ک</span><span class="d-none d-sm-inline">کاربر نمایشی</span>
+                    </button>
+                    <button id="logoutButton" class="btn btn-outline-secondary btn-sm">خروج</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container-fluid page-container py-4 py-lg-5">
+            <div class="demo-notice d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4" role="note">
+                <div><strong>محیط نمایشی</strong><span> تغییرات فقط به‌صورت محلی در همین مرورگر ذخیره می‌شوند و به سرور واقعی ارسال نمی‌شوند.</span></div>
+                <button id="resetDemoButton" class="btn btn-sm btn-link p-0">بازگردانی داده‌های نمونه</button>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                <div>
+                    <p class="eyebrow mb-1">فضای کاری شما</p>
+                    <h1 class="page-title mb-1">یادداشت‌ها</h1>
+                    <p class="text-secondary mb-0">ایده‌ها و کارهای روزمره‌ات را یک‌جا نگه دار.</p>
+                </div>
+                <button id="addNoteButton" class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#noteModal">
+                    <span class="plus-icon">＋</span> افزودن یادداشت
+                </button>
+            </div>
+
+            <div class="row g-4 align-items-start">
+                <aside class="col-12 col-lg-3 col-xl-3">
+                    <section class="card filter-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h2 class="section-heading mb-0">فیلترها</h2>
+                                <span class="filter-symbol" aria-hidden="true">☷</span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="searchInput" class="form-label">جستجو</label>
+                                <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="searchInput" class="form-control" type="search" placeholder="عنوان یا متن یادداشت"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="viewFilter" class="form-label">نمایش</label>
+                                <select id="viewFilter" class="form-select">
+                                    <option value="all">همهٔ یادداشت‌ها</option>
+                                    <option value="my">یادداشت‌های من</option>
+                                    <option value="public">یادداشت‌های عمومی</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sortFilter" class="form-label">مرتب‌سازی</label>
+                                <select id="sortFilter" class="form-select">
+                                    <option value="newest">جدیدترین</option>
+                                    <option value="oldest">قدیمی‌ترین</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="fromDate" class="form-label">از تاریخ</label>
+                                <input id="fromDate" class="form-control" type="date">
+                            </div>
+                            <div class="mb-4">
+                                <label for="toDate" class="form-label">تا تاریخ</label>
+                                <input id="toDate" class="form-control" type="date">
+                            </div>
+                            <button id="applyFiltersButton" class="btn btn-primary w-100">اعمال فیلترها</button>
+                            <button id="clearFiltersButton" class="btn btn-outline-secondary w-100 mt-2">پاک کردن فیلترها</button>
+                        </div>
+                    </section>
+                    <div class="side-note mt-3"><span aria-hidden="true">✦</span><p class="mb-0">یادداشت‌های عمومی برای سایر کاربران قابل مشاهده‌اند؛ یادداشت‌های شخصی فقط در فضای شما نمایش داده می‌شوند.</p></div>
+                </aside>
+
+                <section class="col-12 col-lg-9 col-xl-9">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+                        <h2 id="notesHeading" class="section-heading mb-0">همهٔ یادداشت‌ها</h2>
+                        <p id="notesCount" class="text-secondary small mb-0" aria-live="polite"></p>
+                    </div>
+                    <div id="notesGrid" class="notes-grid"></div>
+                    <div id="emptyState" class="empty-state d-none">
+                        <div class="empty-icon" aria-hidden="true">✎</div>
+                        <h3>یادداشتی پیدا نشد</h3>
+                        <p class="text-secondary mb-0">فیلترها را تغییر بده یا یک یادداشت تازه بساز.</p>
+                    </div>
+                    <nav id="paginationWrap" class="notes-pagination mt-4" aria-label="صفحه‌بندی یادداشت‌ها">
+                        <ul id="pagination" class="pagination justify-content-center mb-0"></ul>
+                    </nav>
+                </section>
+            </div>
+        </main>
+        <footer class="app-footer">Note Manager · ساخته‌شده با PHP و MySQL · نسخهٔ نمایشی رابط کاربری</footer>
+    </div>
+
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form id="noteForm">
+                    <div class="modal-header">
+                        <h2 id="noteModalTitle" class="modal-title fs-5">افزودن یادداشت جدید</h2>
+                        <button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="بستن"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <input id="noteId" type="hidden">
+                        <div class="mb-3">
+                            <label for="noteTitle" class="form-label">عنوان یادداشت</label>
+                            <input id="noteTitle" class="form-control" type="text" maxlength="100" placeholder="مثلاً ایده‌های پروژه" required>
+                            <div id="titleError" class="field-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="noteBody" class="form-label">متن یادداشت</label>
+                            <textarea id="noteBody" class="form-control" rows="6" placeholder="متن یادداشت را اینجا بنویس..." required></textarea>
+                            <div id="bodyError" class="field-error"></div>
+                        </div>
+                        <div class="form-check form-switch public-switch">
+                            <input id="notePublic" class="form-check-input" type="checkbox" role="switch">
+                            <label class="form-check-label" for="notePublic">این یادداشت عمومی باشد</label>
+                            <small class="d-block text-secondary">یادداشت عمومی در فهرست یادداشت‌های عمومی نمایش داده می‌شود.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+                        <button type="submit" class="btn btn-primary px-4">ذخیره یادداشت</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h2 id="deleteModalTitle" class="modal-title fs-5">حذف یادداشت</h2><button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="بستن"></button></div>
+                <div class="modal-body p-4"><p class="mb-0">آیا از حذف یادداشت <strong id="deleteNoteTitle"></strong> مطمئنی؟ این عملیات در نسخهٔ نمایشی قابل بازگشت نیست.</p></div>
+                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button><button id="confirmDeleteButton" type="button" class="btn btn-danger">حذف یادداشت</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h2 id="profileModalTitle" class="modal-title fs-5">حساب نمایشی</h2><button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="بستن"></button></div>
+                <div class="modal-body p-4">
+                    <div class="profile-summary"><span class="avatar avatar-large">ک</span><div><strong>کاربر نمایشی</strong><p class="text-secondary small mb-0">demo@notemanager.local</p></div></div>
+                    <div class="profile-demo-note mt-3">ورود، ثبت‌نام و ویرایش اطلاعات حساب در نسخهٔ اصلی با PHP و پایگاه داده انجام می‌شود. این صفحه فقط برای نمایش رابط کاربری است.</div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">متوجه شدم</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 start-0 p-3">
+        <div id="demoToast" class="toast align-items-center border-0" role="status" aria-live="polite" aria-atomic="true">
+            <div class="d-flex"><div id="toastMessage" class="toast-body">یادداشت ذخیره شد.</div><button type="button" class="btn-close btn-close-white me-auto ms-2" data-bs-dismiss="toast" aria-label="بستن"></button></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html>
